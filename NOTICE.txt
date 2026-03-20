@@ -1,0 +1,4 @@
+Easysearch Plugin Template
+Copyright 2026 INFINI Ltd (https://infinilabs.com)
+
+This product is an official plugin template for Easysearch.
