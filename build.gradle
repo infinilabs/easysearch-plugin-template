@@ -18,7 +18,6 @@ buildscript {
         easysearch_version = System.getProperty("easysearch.version", "2.1.0")
     }
     repositories {
-        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven { url "https://maven.aliyun.com/repository/central" }
@@ -30,7 +29,6 @@ buildscript {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     gradlePluginPortal()
     maven { url "https://maven.aliyun.com/repository/central" }
