@@ -104,7 +104,5 @@ src/main/java/org/easysearch/plugin/hello/
 
 ## 许可证
 
-Copyright © INFINI Ltd. All rights reserved.  
+Copyright © INFINI LTD. All rights reserved.  
 Licensed under the [Apache License, Version 2.0](LICENSE.txt).
-
-Easysearch is a trademark of [INFINI Ltd](https://infinilabs.com).
