@@ -1,0 +1,27 @@
+{
+  "hello": {
+    "documentation": {
+      "url": "https://github.com/infinilabs/easysearch-plugin-template",
+      "description": "Returns a hello message from the example plugin"
+    },
+    "stability": "stable",
+    "url": {
+      "paths": [
+        {
+          "path": "/_hello",
+          "methods": [
+            "GET"
+          ]
+        }
+      ]
+    },
+    "params": {
+      "name": {
+        "type": "string",
+        "description": "Optional name to include in the greeting"
+      }
+    },
+    "body": null
+  }
+}
+

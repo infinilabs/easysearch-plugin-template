@@ -1,0 +1,17 @@
+---
+"hello endpoint returns greeting with explicit name":
+  - do:
+      hello:
+        name: "tom"
+
+  - match: { message: "Hello tom" }
+  - is_true: cluster_name
+  - is_true: node_name
+
+---
+"hello endpoint uses default name":
+  - do:
+      hello: {}
+
+  - match: { message: "Hello World" }
+

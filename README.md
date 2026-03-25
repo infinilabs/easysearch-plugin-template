@@ -94,6 +94,30 @@ src/main/java/org/easysearch/plugin/hello/
    }
    ```
 
+## 测试
+
+模板现在包含最基础的两类测试：
+
+- 单元测试：`src/test/java/org/easysearch/plugin/hello/rest/RestHelloActionTest.java`
+- YAML REST 套件入口：`src/yamlRestTest/java/org/easysearch/plugin/hello/HelloClientYamlTestSuiteIT.java`
+- YAML REST API 定义：`src/yamlRestTest/resources/rest-api-spec/api/hello.json`
+- YAML REST 测试：`src/yamlRestTest/resources/rest-api-spec/test/hello/10_basic.yml`
+
+常用命令：
+
+```bash
+./gradlew test
+./gradlew yamlRestTest
+./gradlew check
+```
+
+说明：
+
+- `test` 运行普通单元测试（类名需要匹配 `*Test`）
+- 单元测试基于 `EasySearchTestCase`（推荐沿用 `testXxx` 方法命名）
+- `yamlRestTest` 会启动测试集群并执行 REST 用例（需要 `src/yamlRestTest/java` 下有 suite 类）
+- `check` 已配置为同时触发 `integTest` 与 `yamlRestTest`
+
 ## 版本兼容
 
 | 组件 | 版本 |

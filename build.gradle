@@ -1,17 +1,4 @@
-apply plugin: 'easysearch.esplugin'
-
-esplugin {
-    name 'hello-plugin'
-    description 'A simple hello plugin for Easysearch'
-    classname "org.easysearch.plugin.hello.HelloPlugin"
-    licenseFile rootProject.file('LICENSE.txt')
-    noticeFile rootProject.file('NOTICE.txt')
-}
-
-// Skip POM validation - this plugin is not published to maven.
-tasks.named('validateNebulaPom') {
-    enabled = false
-}
+import org.easysearch.gradle.test.RestIntegTestTask
 
 buildscript {
     ext {
@@ -28,9 +15,35 @@ buildscript {
     }
 }
 
+apply plugin: 'easysearch.esplugin'
+apply plugin: 'easysearch.yaml-rest-test'
+
+esplugin {
+    name 'hello-plugin'
+    description 'A simple hello plugin for Easysearch'
+    classname "org.easysearch.plugin.hello.HelloPlugin"
+    licenseFile rootProject.file('LICENSE.txt')
+    noticeFile rootProject.file('NOTICE.txt')
+}
+
+// Skip POM validation - this plugin is not published to maven.
+tasks.named('validateNebulaPom') { enabled = false }
+
 repositories {
     mavenCentral()
     gradlePluginPortal()
     maven { url "https://maven.aliyun.com/repository/central" }
     maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
 }
+
+test {
+    include "**/*Test.class"
+}
+
+task integTest(type: RestIntegTestTask) {
+    description = "Run integration tests against an Easysearch test cluster"
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+}
+
+tasks.named('check') { dependsOn integTest }
