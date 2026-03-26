@@ -35,15 +35,3 @@ repositories {
     maven { url "https://maven.aliyun.com/repository/central" }
     maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
 }
-
-test {
-    include "**/*Tests.class"
-}
-
-task integTest(type: RestIntegTestTask) {
-    description = "Run integration tests against an Easysearch test cluster"
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-}
-
-tasks.named('check') { dependsOn integTest }

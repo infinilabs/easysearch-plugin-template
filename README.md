@@ -128,9 +128,8 @@ src/main/java/org/easysearch/plugin/hello/
 
 ## 测试
 
-模板当前包含两类基础测试：
+模板当前包含基础 YAML REST 测试：
 
-- 单元测试：`src/test/java/org/easysearch/plugin/hello/rest/RestHelloActionTest.java`
 - YAML REST suite：`src/yamlRestTest/java/org/easysearch/plugin/hello/HelloClientYamlTestSuiteIT.java`
 - API 定义：`src/yamlRestTest/resources/rest-api-spec/api/hello.json`
 - YAML 用例：`src/yamlRestTest/resources/rest-api-spec/test/hello/10_basic.yml`
@@ -139,7 +138,6 @@ src/main/java/org/easysearch/plugin/hello/
 
 ```bash
 ./gradlew test
-./gradlew integTest
 ./gradlew yamlRestTest
 ./gradlew check
 mvn test
@@ -147,11 +145,10 @@ mvn test
 
 说明：
 
-- `./gradlew test`：运行单元测试（`src/test` 下以Tests结尾的测试类）
-- `./gradlew integTest`：运行基于测试集群的插件集成测试（比单元测试更接近真实运行环境）
+- `./gradlew test`：运行单元测试
 - `./gradlew yamlRestTest`：运行 YAML REST 测试套件
-- `./gradlew check`：聚合执行校验任务（包含 `test`、`integTest` 与 `yamlRestTest`）
-- `mvn test`：仅覆盖编译与单元测试，不含 `integTest` 与 `yamlRestTest`，不替代 Gradle 的完整校验链路
+- `./gradlew check`：聚合执行校验任务（包含 `test` 与 `yamlRestTest`）
+- `mvn test`：仅覆盖编译与单元测试，不含 `yamlRestTest`，不替代 Gradle 的完整校验链路
 
 ## 本地运行（Gradle）
 
