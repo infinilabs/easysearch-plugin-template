@@ -2,7 +2,7 @@ import org.easysearch.gradle.test.RestIntegTestTask
 
 buildscript {
     ext {
-        easysearch_version = System.getProperty("easysearch.version", "2.1.0")
+        easysearch_version = System.getProperty("easysearch.version", "2.1.1")
     }
     repositories {
         mavenCentral()

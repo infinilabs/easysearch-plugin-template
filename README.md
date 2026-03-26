@@ -77,7 +77,7 @@ Maven 相关辅助文件统一放在 `maven/` 下，`pom.xml` 保持在项目根
 `Gradle` 默认值示例：
 
 ```groovy
-easysearch_version = System.getProperty("easysearch.version", "2.1.0")
+easysearch_version = System.getProperty("easysearch.version", "2.1.1")
 ```
 
 示例命令（可直接复制）：
