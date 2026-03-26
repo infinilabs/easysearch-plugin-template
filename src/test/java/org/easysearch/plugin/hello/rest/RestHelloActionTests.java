@@ -10,7 +10,7 @@ import org.easysearch.test.EasySearchTestCase;
 
 import java.util.List;
 
-public class RestHelloActionTest extends EasySearchTestCase {
+public class RestHelloActionTests extends EasySearchTestCase {
 
     public void testGetName() {
         RestHelloAction action = new RestHelloAction();

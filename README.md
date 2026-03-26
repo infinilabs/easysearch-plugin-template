@@ -147,6 +147,7 @@ mvn test
 
 说明：
 
+- `./gradlew test`：运行单元测试（`src/test` 下以Tests结尾的测试类）
 - `./gradlew integTest`：运行基于测试集群的插件集成测试（比单元测试更接近真实运行环境）
 - `./gradlew yamlRestTest`：运行 YAML REST 测试套件
 - `./gradlew check`：聚合执行校验任务（包含 `test`、`integTest` 与 `yamlRestTest`）
