@@ -10,7 +10,7 @@
 
 ## 构建方式（建议先看）
 
-- **Gradle（主构建）**：用于日常开发和完整验证，包含编译、打包、单元测试、`integTest`、`yamlRestTest`
+- **Gradle（主构建）**：用于日常开发和完整验证，包含编译、打包、单元测试、`yamlRestTest`
 - **Maven（示例构建）**：提供编译、单元测试和基础 zip 打包，适合习惯 Maven 的团队参考
 
 常用命令：
@@ -146,47 +146,9 @@ mvn test
 说明：
 
 - `./gradlew test`：运行单元测试
-- `./gradlew yamlRestTest`：运行 YAML REST 测试套件
+- `./gradlew yamlRestTest`：运行 YAML REST 测试套件（声明式测试，自动启动测试集群验证 REST API）
 - `./gradlew check`：聚合执行校验任务（包含 `test` 与 `yamlRestTest`）
 - `mvn test`：仅覆盖编译与单元测试，不含 `yamlRestTest`，不替代 Gradle 的完整校验链路
-
-### YAML REST 测试套件详解
-
-`yamlRestTest` 是 Easysearch 插件开发中推荐的集成测试方式，它使用声明式的 YAML 文件编写测试用例，相比传统的 Java 集成测试（integTest）有以下特点：
-
-**核心优势**
-
-- **声明式编写**：无需编写 Java 代码，在 YAML 中描述请求和预期响应即可
-- **自动编排**：测试框架自动处理集群启动、插件加载和测试执行
-- **跨语言共享**：YAML 用例可被非 Java 客户端复用，作为 API 契约文档
-
-**与 integTest 的区别**
-
-| 维度 | yamlRestTest | integTest（已移除） |
-|------|--------------|---------------------|
-| 测试格式 | YAML 文件（声明式） | Java 代码（编程式） |
-| 测试类 | ClientYamlTestSuiteIT（框架生成） | 自定义 `*IT.class` |
-| 表达能力 | 中等（预设操作符：`do`, `match`, `set` 等） | 灵活（任意 Java 逻辑） |
-| 编写成本 | 低 | 高 |
-| 共享性 | 高（跨语言客户端可用） | 低（仅 Java 项目） |
-| 适用场景 | 标准 REST API 验证 | 复杂集成逻辑、定制测试 |
-
-**示例 YAML 用例结构**
-
-```yaml
-# src/yamlRestTest/resources/rest-api-spec/test/hello/10_basic.yml
-"Hello world":
-  - do:
-      hello:
-        name: "tom"
-  - match:
-      { message: "Hello tom" }
-```
-
-**适用建议**
-
-- 优先使用 `yamlRestTest` 验证插件 REST 端点的基本功能
-- 如需复杂前置准备（如模拟特定集群状态、并发测试），可考虑在单元测试中模拟或使用外部测试工具
 
 ## 本地运行（Gradle）
 
