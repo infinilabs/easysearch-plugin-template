@@ -26,6 +26,13 @@ import static org.easysearch.rest.RestRequest.Method.GET;
  */
 public class RestHelloAction extends BaseRestHandler {
 
+    /**
+     * Default constructor for RestHelloAction.
+     */
+    public RestHelloAction() {
+        super();
+    }
+
     @Override
     public String getName() {
         return "hello_action";

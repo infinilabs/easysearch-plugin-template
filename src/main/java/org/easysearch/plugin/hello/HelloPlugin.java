@@ -29,6 +29,13 @@ import java.util.function.Supplier;
  */
 public class HelloPlugin extends Plugin implements ActionPlugin {
 
+    /**
+     * Default constructor for HelloPlugin.
+     */
+    public HelloPlugin() {
+        super();
+    }
+
     @Override
     public List<RestHandler> getRestHandlers(
             Settings settings,
