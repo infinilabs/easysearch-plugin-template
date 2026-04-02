@@ -2,7 +2,7 @@ import org.easysearch.gradle.test.RestIntegTestTask
 
 buildscript {
     ext {
-        easysearch_version = System.getProperty("easysearch.version", "2.1.1")
+        easysearchVersion = System.getProperty("easysearch.version", "2.1.2")
     }
     repositories {
         mavenCentral()
@@ -11,7 +11,7 @@ buildscript {
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     }
     dependencies {
-        classpath "com.infinilabs.easysearch.gradle:build-tools:${easysearch_version}"
+        classpath "com.infinilabs.easysearch.gradle:build-tools:${easysearchVersion}"
     }
 }
 

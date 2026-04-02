@@ -17,7 +17,7 @@
 
         <plugin.name>hello-plugin</plugin.name>
         <plugin.classname>org.easysearch.plugin.hello.HelloPlugin</plugin.classname>
-        <easysearch.version>2.1.0</easysearch.version>
+        <easysearch.version>2.1.2</easysearch.version>
     </properties>
 
     <dependencies>
