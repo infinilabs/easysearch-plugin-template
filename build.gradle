@@ -1,8 +1,6 @@
-import org.easysearch.gradle.test.RestIntegTestTask
-
 buildscript {
     ext {
-        easysearchVersion = System.getProperty("easysearch.version", "2.1.2")
+        easysearchVersion = System.getProperty("easysearch.version", "2.5.1")
     }
     repositories {
         mavenCentral()
@@ -34,4 +32,50 @@ repositories {
     gradlePluginPortal()
     maven { url "https://maven.aliyun.com/repository/central" }
     maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+}
+
+// 2.5.0 起测试框架的 BootstrapForTesting 依赖 security agent，
+// 外部插件构建需自行以 -javaagent 加载（agent 与 bootstrap jar 必须在同一目录）。
+def esVersionParts = easysearchVersion.tokenize('.').take(2).collect { it.toInteger() }
+def needsSecurityAgent = esVersionParts[0] > 2 || (esVersionParts[0] == 2 && esVersionParts[1] >= 5)
+
+if (needsSecurityAgent) {
+    configurations {
+        securityAgent {
+            canBeConsumed = false
+            transitive = false
+        }
+    }
+
+    dependencies {
+        testImplementation "com.infinilabs.easysearch:easysearch-security-agent-bootstrap:${easysearchVersion}"
+        securityAgent "com.infinilabs.easysearch:easysearch-security-agent:${easysearchVersion}"
+        securityAgent "com.infinilabs.easysearch:easysearch-security-agent-bootstrap:${easysearchVersion}"
+    }
+
+    def securityAgentDir = layout.buildDirectory.dir('security-agent')
+    def prepareSecurityAgent = tasks.register('prepareSecurityAgent', Copy) {
+        from configurations.securityAgent
+        into securityAgentDir
+        doLast {
+            // Boot-Class-Path 相对 agent jar 所在目录解析，官方发行版与本地源码构建的
+            // bootstrap jar 文件名不同，按 manifest 对齐文件名
+            File dir = securityAgentDir.get().asFile
+            File agent = dir.listFiles().find { !it.name.contains('bootstrap') }
+            String bootName = new java.util.jar.JarFile(agent).withCloseable {
+                it.manifest.mainAttributes.getValue('Boot-Class-Path')
+            }
+            File bootstrap = dir.listFiles().find { it.name.contains('bootstrap') }
+            if (bootName && bootstrap.name != bootName) {
+                bootstrap.renameTo(new File(dir, bootName))
+            }
+        }
+    }
+
+    def agentJarFile = securityAgentDir.get().file("easysearch-security-agent-${easysearchVersion}.jar").asFile
+    tasks.withType(Test).configureEach {
+        dependsOn prepareSecurityAgent
+        jvmArgs "-javaagent:${agentJarFile}"
+        systemProperty 'tests.security.agent.jar', agentJarFile.absolutePath
+    }
 }

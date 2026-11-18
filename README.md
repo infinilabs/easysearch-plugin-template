@@ -21,10 +21,10 @@
 mvn package
 ```
 
-产物位置：
+产物位置（文件名跟随插件名，模板默认为 `hello-plugin`）：
 
-- `Gradle`：`build/distributions/your-plugin.zip`
-- `Maven`：`target/your-plugin.zip`
+- `Gradle`：`build/distributions/hello-plugin.zip`
+- `Maven`：`target/hello-plugin.zip`
 
 ## 快速开始
 
@@ -36,6 +36,7 @@ mvn package
 # 1. build.gradle: esplugin.name = 'your-plugin-name'
 # 2. settings.gradle: rootProject.name = 'your-project-name'
 # 3. 包名: src/main/java/org/easysearch/plugin/yourname/
+# 4. pom.xml: plugin.name / plugin.classname（Maven 示例构建）
 ```
 
 ### 2) 本地构建
@@ -52,7 +53,7 @@ mvn package
 
 ```bash
 # 在 Easysearch 安装目录执行
-bin/easysearch-plugin install file:///path/to/your-plugin.zip
+bin/easysearch-plugin install file:///path/to/hello-plugin.zip
 ```
 
 ## Maven 示例说明
@@ -77,15 +78,19 @@ Maven 相关辅助文件统一放在 `maven/` 下，`pom.xml` 保持在项目根
 `Gradle` 默认值示例：
 
 ```groovy
-easysearch_version = System.getProperty("easysearch.version", "2.1.1")
+easysearchVersion = System.getProperty("easysearch.version", "2.5.1")
 ```
 
 示例命令（可直接复制）：
 
 ```bash
-./gradlew build -Deasysearch.version=2.2.0
-mvn package -Deasysearch.version=2.2.0
+./gradlew build -Deasysearch.version=2.3.0
+mvn package -Deasysearch.version=2.3.0 -P '!security-agent'
 ```
+
+注意：
+
+- Easysearch 2.5.0 起测试框架依赖 security agent。Gradle 构建会按目标版本自动以 `-javaagent` 接线；Maven 由默认启用的 `security-agent` profile 补充 bootstrap 测试依赖，并在单元测试中关闭 agent 安全策略（Surefire 的 fork 退出不受框架 exit 白名单允许）。适配 2.5.0 以下版本时需禁用该 profile（见上例）
 
 ## 示例功能
 
@@ -195,10 +200,10 @@ tail -f build/testclusters/runTask-0/logs/*.log
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Easysearch | 2.x | |
+| Easysearch | 默认 2.5.1 | 可通过 `-Deasysearch.version` 切换，见「版本适配」 |
 | Gradle | 8.10.2 | 由 Gradle Wrapper 锁定，建议使用 `./gradlew` 而非本地 Gradle |
 | Maven | 3.6.3+ | 由 `maven-compiler-plugin 3.14.0` 决定最低版本要求 |
-| Java | 11+ | |
+| Java | 21+ | Easysearch 2.5.x 运行时要求 Java 21 |
 
 ## 许可证
 
