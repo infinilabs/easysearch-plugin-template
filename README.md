@@ -10,16 +10,16 @@
 
 ## 构建方式（建议先看）
 
-- **Gradle（主构建）**：用于日常开发和完整验证，包含编译、打包、单元测试、`yamlRestTest`
-- **Maven（示例构建）**：提供编译、单元测试和基础 zip 打包，适合习惯 Maven 的团队参考
+- **Gradle（主构建）**：示例使用 Easysearch 2.5.2，覆盖编译、打包、单元测试和双节点 `yamlRestTest`。
+- **Maven（参考构建）**：原模板的 Maven 配置使用 Easysearch 2.5.1，提供编译、单元测试和基础 ZIP 打包。
 
-常用命令：
+使用 JDK 21 和项目自带的 Gradle Wrapper。从能提供 Easysearch 2.5.2 的 Maven 仓库构建时，把仓库 URL 或本地仓库根目录传给 Gradle：
 
 ```bash
-./gradlew build
-./gradlew run
-mvn package
+./gradlew build -PeasysearchMavenRepository=/path/to/maven
 ```
+
+仓库需要提供 2.5.2 的 `build-tools`、运行与测试依赖，以及 YAML REST 测试用的发行包和 REST spec。已在 Maven Central 发布时，可省略 `-PeasysearchMavenRepository`。
 
 产物位置（文件名跟随插件名，模板默认为 `hello-plugin`）：
 
@@ -42,8 +42,8 @@ mvn package
 ### 2) 本地构建
 
 ```bash
-# 推荐（主构建）
-./gradlew build
+# Gradle 2.5.2，从本地 Maven 仓库读取制品
+./gradlew build -PeasysearchMavenRepository=/path/to/maven
 
 # 可选（Maven 示例构建）
 mvn package
@@ -68,29 +68,23 @@ Maven 相关辅助文件统一放在 `maven/` 下，`pom.xml` 保持在项目根
 - `plugin.xml` 仅被 `maven-assembly-plugin` 读取，用于定义 zip 内文件布局
 - Gradle 不读取 `plugin.xml`，插件 descriptor 由 `easysearch.esplugin` 在构建阶段自动生成
 
-## 版本适配
+## Gradle 测试自动加载安全 agent
 
-如果你要适配不同的 Easysearch 版本：
-
-- `Gradle`：修改 `build.gradle` 的默认值，或通过系统属性覆盖
-- `Maven`：修改 `pom.xml` 中的 `easysearch.version`
-
-`Gradle` 默认值示例：
+`build.gradle` 引入 2.5.2 的构建工具，并应用插件开发入口：
 
 ```groovy
-easysearchVersion = System.getProperty("easysearch.version", "2.5.1")
+buildscript {
+    dependencies {
+        classpath 'com.infinilabs.easysearch.gradle:build-tools:2.5.2'
+    }
+}
+
+apply plugin: 'easysearch.esplugin'
 ```
 
-示例命令（可直接复制）：
+`easysearch.esplugin` 为 Gradle 测试解析同版本 agent 和 bootstrap，按 Manifest 要求将它们准备到 `build/easysearch-java-agent/2.5.2/`，并自动给测试 JVM 设置 `-javaagent`。插件工程可以直接编写和运行测试，无需在 `build.gradle` 里另写复制、改名或 JVM 参数配置。REST 测试启动的 Easysearch 节点使用测试发行包内的 agent。
 
-```bash
-./gradlew build -Deasysearch.version=2.3.0
-mvn package -Deasysearch.version=2.3.0 -P '!security-agent'
-```
-
-注意：
-
-- Easysearch 2.5.0 起测试框架依赖 security agent。Gradle 构建会按目标版本自动以 `-javaagent` 接线；Maven 由默认启用的 `security-agent` profile 补充 bootstrap 测试依赖，并在单元测试中关闭 agent 安全策略（Surefire 的 fork 退出不受框架 exit 白名单允许）。适配 2.5.0 以下版本时需禁用该 profile（见上例）
+Maven 参考构建由默认启用的 `security-agent` profile 补充 bootstrap 测试依赖，并在 Surefire 单元测试中关闭 agent 安全策略。
 
 ## 示例功能
 
@@ -133,7 +127,7 @@ src/main/java/org/easysearch/plugin/hello/
 
 ## 测试
 
-模板当前包含基础 YAML REST 测试：
+单元测试经 REST 处理器验证显式姓名、JSON 响应和默认问候。YAML REST 测试在两个 Easysearch 节点上验证插件的真实 HTTP 入口：
 
 - YAML REST suite：`src/yamlRestTest/java/org/easysearch/plugin/hello/HelloClientYamlTestSuiteIT.java`
 - API 定义：`src/yamlRestTest/resources/rest-api-spec/api/hello.json`
@@ -142,9 +136,9 @@ src/main/java/org/easysearch/plugin/hello/
 常用测试命令：
 
 ```bash
-./gradlew test
-./gradlew yamlRestTest
-./gradlew check
+./gradlew test -PeasysearchMavenRepository=/path/to/maven
+./gradlew yamlRestTest -PeasysearchMavenRepository=/path/to/maven
+./gradlew check -PeasysearchMavenRepository=/path/to/maven
 mvn test
 ```
 
@@ -160,7 +154,7 @@ mvn test
 如果你想在本地启动一个带当前插件的测试节点进行调试，可使用：
 
 ```bash
-./gradlew run
+./gradlew run -PeasysearchMavenRepository=/path/to/maven
 ```
 
 常见用途：
@@ -200,7 +194,7 @@ tail -f build/testclusters/runTask-0/logs/*.log
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Easysearch | 默认 2.5.1 | 可通过 `-Deasysearch.version` 切换，见「版本适配」 |
+| Easysearch | Gradle 示例 2.5.2，Maven 参考 2.5.1 | 安装插件时选择对应版本的 Easysearch |
 | Gradle | 8.10.2 | 由 Gradle Wrapper 锁定，建议使用 `./gradlew` 而非本地 Gradle |
 | Maven | 3.6.3+ | 由 `maven-compiler-plugin 3.14.0` 决定最低版本要求 |
 | Java | 21+ | Easysearch 2.5.x 运行时要求 Java 21 |

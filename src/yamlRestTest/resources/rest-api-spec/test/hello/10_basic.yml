@@ -5,8 +5,8 @@
         name: "tom"
 
   - match: { message: "Hello tom" }
-  - is_true: cluster_name
-  - is_true: node_name
+  - match: { cluster_name: "yamlRestTest" }
+  - match: { node_name: "/^yamlRestTest-[01]$/" }
 
 ---
 "hello endpoint uses default name":

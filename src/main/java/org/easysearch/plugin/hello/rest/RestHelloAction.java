@@ -6,7 +6,9 @@
 package org.easysearch.plugin.hello.rest;
 
 import org.easysearch.client.node.NodeClient;
+import org.easysearch.cluster.ClusterName;
 import org.easysearch.common.xcontent.XContentBuilder;
+import org.easysearch.node.Node;
 import org.easysearch.rest.BaseRestHandler;
 import org.easysearch.rest.BytesRestResponse;
 import org.easysearch.rest.RestRequest;
@@ -47,28 +49,21 @@ public class RestHelloAction extends BaseRestHandler {
 
     @Override
     protected RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
-        // Get the name parameter, default to "World"
         String name = request.param("name", "World");
-        
-        // Get cluster and node information from the client
-        String clusterName = client.settings().get("cluster.name", "easysearch-cluster");
-        
+        String clusterName = ClusterName.CLUSTER_NAME_SETTING.get(client.settings()).value();
+        String nodeName = Node.NODE_NAME_SETTING.get(client.settings());
+
         return channel -> {
-            XContentBuilder builder = channel.newBuilder();
-            builder.startObject();
-            
-            // Add greeting message
-            builder.field("message", "Hello " + name);
-            
-            // Add cluster information
-            builder.field("cluster_name", clusterName);
-            builder.field("node_name", client.getLocalNodeId());
-            builder.field("timestamp", Instant.now().toEpochMilli());
-            
-            builder.endObject();
-            
-            RestResponse response = new BytesRestResponse(RestStatus.OK, builder);
-            channel.sendResponse(response);
+            try (XContentBuilder builder = channel.newBuilder()) {
+                builder.startObject();
+                builder.field("message", "Hello " + name);
+                builder.field("cluster_name", clusterName);
+                builder.field("node_name", nodeName);
+                builder.field("timestamp", Instant.now().toEpochMilli());
+                builder.endObject();
+                RestResponse response = new BytesRestResponse(RestStatus.OK, builder);
+                channel.sendResponse(response);
+            }
         };
     }
 }
