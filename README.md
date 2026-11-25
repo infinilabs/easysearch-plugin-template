@@ -78,7 +78,7 @@ Maven 相关辅助文件统一放在 `maven/` 下，`pom.xml` 保持在项目根
 `Gradle` 默认值示例：
 
 ```groovy
-easysearchVersion = System.getProperty("easysearch.version", "2.5.1")
+easysearchVersion = System.getProperty("easysearch.version", "2.5.2")
 ```
 
 示例命令（可直接复制）：
@@ -90,7 +90,7 @@ mvn package -Deasysearch.version=2.3.0 -P '!security-agent'
 
 注意：
 
-- Easysearch 2.5.0 起测试框架依赖 security agent。Gradle 构建会按目标版本自动以 `-javaagent` 接线；Maven 由默认启用的 `security-agent` profile 补充 bootstrap 测试依赖，并在单元测试中关闭 agent 安全策略（Surefire 的 fork 退出不受框架 exit 白名单允许）。适配 2.5.0 以下版本时需禁用该 profile（见上例）
+- Easysearch 2.5.0 起测试框架依赖 security agent。Gradle 构建在 2.5.2 及以上由 build-tools 自动以 `-javaagent` 接线（模板无需任何 agent 配置）；2.5.0/2.5.1 的 build-tools 无此逻辑，用 Gradle 适配时需自行接线。Maven 由默认启用的 `security-agent` profile 补充 bootstrap 测试依赖，并在单元测试中关闭 agent 安全策略（Surefire 的 fork 退出不受框架 exit 白名单允许）。适配 2.5.0 以下版本时需禁用该 profile（见上例）
 
 ## 示例功能
 
@@ -200,7 +200,7 @@ tail -f build/testclusters/runTask-0/logs/*.log
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Easysearch | 默认 2.5.1 | 可通过 `-Deasysearch.version` 切换，见「版本适配」 |
+| Easysearch | 默认 2.5.2 | 可通过 `-Deasysearch.version` 切换，见「版本适配」 |
 | Gradle | 8.10.2 | 由 Gradle Wrapper 锁定，建议使用 `./gradlew` 而非本地 Gradle |
 | Maven | 3.6.3+ | 由 `maven-compiler-plugin 3.14.0` 决定最低版本要求 |
 | Java | 21+ | Easysearch 2.5.x 运行时要求 Java 21 |
